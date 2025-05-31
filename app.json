@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "community",
+    "scheme": "com.onemasol.community",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "ios": {
@@ -42,7 +42,8 @@
           "resizeMode": "contain",
           "backgroundColor": "#000000"
         }
-      ]
+      ],
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true
