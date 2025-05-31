@@ -3,6 +3,11 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import CalendarLayout from './_layout';
 
+export const options = {
+  headerShown: false,
+  title: '',
+};
+
 export default function CalendarScreen() {
   const handleDayPress = () => {
     router.push('./day');

@@ -3,6 +3,11 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import SettingsLayout from './_layout';
 
+export const options = {
+  headerShown: false,
+  title: '',
+};
+
 export default function SettingsScreen() {
   const handleNavigateToChat = () => {
     router.push('../chat');

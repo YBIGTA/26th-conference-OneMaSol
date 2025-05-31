@@ -1,3 +1,8 @@
+export const options = {
+  headerShown: false,
+  title: '',
+};
+
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import React from 'react';

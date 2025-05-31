@@ -1,8 +1,8 @@
-import { Tabs } from 'expo-router';
+import { Stack } from 'expo-router';
 
-export default function TabsLayout() {
+export default function SplashLayout() {
   return (
-    <Tabs
+    <Stack
       screenOptions={{
         headerShown: false,
         title: '',
