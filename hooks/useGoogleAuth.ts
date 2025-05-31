@@ -16,7 +16,7 @@ export function useGoogleAuth() {
   useEffect(() => {
     if (response?.type === 'success') {
       const { code } = response.params as { code: string };
-      // TODO: code를 백엔드로 전달하여 토큰 교환
+      // TODO: code를 백엔드로 POST하는 로직만 추가 토큰 교환
       // 예시: fetch('/auth/google', { method: 'POST', body: JSON.stringify({ code }) })
     }
   }, [response]);
