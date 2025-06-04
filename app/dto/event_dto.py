@@ -7,6 +7,7 @@ Create · Update · Read(공개) 세 가지로 분리
 from typing import Optional
 import datetime as dt
 from pydantic import BaseModel, Field, validator
+import uuid
 
 class _EventBase(BaseModel):
     """
@@ -51,3 +52,14 @@ class EventPublicDTO(BaseModel):
     start_at: dt.datetime
     end_at: dt.datetime
     location: Optional[str]
+
+class EventRead(BaseModel):
+    id: uuid.UUID
+    calendar_id: Optional[str]
+    user_id: str
+    title: str
+    description: Optional[str]
+    start_at: dt.datetime
+    end_at: dt.datetime
+    location: Optional[str]
+    # 필요한 필드를 더 추가하세요
