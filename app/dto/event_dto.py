@@ -35,6 +35,7 @@ class EventCreateDTO(_EventBase):
     title: str
     start_at: dt.datetime
     end_at: dt.datetime
+    user_id: str = Field(..., description="이벤트 생성자 ID")
 
 class EventUpdateDTO(_EventBase):
     """
