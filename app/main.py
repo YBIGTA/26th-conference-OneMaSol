@@ -5,13 +5,15 @@ from app.db.session import init_db
 from dotenv import load_dotenv
 load_dotenv(".env")  # 반드시 Settings() 보다 먼저 호출해야 합니다.
 from app.core.config import settings
+from app.core.custom_response import CustomJSONResponse
 
 print("🚨 settings.DB_URL =", settings.DB_URL)
 def create_app() -> FastAPI:
     app = FastAPI(
         title=settings.PROJECT_NAME,
         version="0.1.0",
-        description="자영업자 비서형 캘린더 + AI 에이전트"
+        description="자영업자 비서형 캘린더 + AI 에이전트",
+        default_response_class=CustomJSONResponse
     )
    
 
