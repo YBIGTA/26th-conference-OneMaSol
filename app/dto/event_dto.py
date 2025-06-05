@@ -6,9 +6,21 @@ Create · Update · Read(공개) 세 가지로 분리
 
 from typing import Optional
 import datetime as dt
+from datetime import datetime
 from pydantic import BaseModel, Field, validator
+import uuid
 
 class _EventBase(BaseModel):
+    class Config:
+        """
+        공통 필드에 대한 설정
+        - datetime 포맷: yyyy-MM-dd HH:mm:ss
+        """
+        json_encoders = {
+            datetime: lambda v: v.strftime('%Y-%m-%d %H:%M:%S')
+        }
+        from_attributes = True
+
     """
     Create/Update 공통 필드를 묶기 위한 추상 베이스.
     """
@@ -34,6 +46,7 @@ class EventCreateDTO(_EventBase):
     title: str
     start_at: dt.datetime
     end_at: dt.datetime
+    user_id: str = Field(..., description="이벤트 생성자 ID")
 
 class EventUpdateDTO(_EventBase):
     """
@@ -41,7 +54,7 @@ class EventUpdateDTO(_EventBase):
     """
     pass
 
-class EventPublicDTO(BaseModel):
+class EventPublicDTO(_EventBase):
     """
     응답 전용 DTO. DB PK(id) 포함해 모든 필드가 Required.
     """
@@ -51,3 +64,14 @@ class EventPublicDTO(BaseModel):
     start_at: dt.datetime
     end_at: dt.datetime
     location: Optional[str]
+
+class EventRead(_EventBase):
+    id: uuid.UUID
+    calendar_id: Optional[str]
+    user_id: str
+    title: str
+    description: Optional[str]
+    start_at: dt.datetime
+    end_at: dt.datetime
+    location: Optional[str]
+    # 필요한 필드를 더 추가하세요
