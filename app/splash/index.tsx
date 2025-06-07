@@ -3,7 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState } from 'react';
 import { Alert, Image, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useGoogleAuth } from '../context/AuthContext';
+import { useGoogleAuth } from '../../hooks/useGoogleAuth';
 
 export const options = { headerShown: false };
 

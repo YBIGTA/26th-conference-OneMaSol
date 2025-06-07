@@ -8,7 +8,7 @@ export default {
     version: '1.0.0',
     orientation: 'portrait',
     icon: './assets/images/icon.png',
-    scheme: 'com.onemasol.community',
+    scheme: 'com.OneMaSol.OneMaSol',
     userInterfaceStyle: 'dark',
     newArchEnabled: true,
     ios: {

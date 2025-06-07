@@ -1,5 +1,4 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Google from 'expo-auth-session/providers/google';
 import * as WebBrowser from 'expo-web-browser';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
@@ -92,26 +91,6 @@ export function useAuth() {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-}
-
-export function useGoogleAuth() {
-  const { signIn } = useAuth();
-  const [request, response, promptAsync] = Google.useAuthRequest({
-    iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_ID,
-    androidClientId: process.env.EXPO_PUBLIC_GOOGLE_ANDROID_ID,
-    webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_ID,
-    usePKCE: true,
-    responseType: 'token',
-  });
-
-  useEffect(() => {
-    if (response?.type === 'success') {
-      const { access_token } = response.params;
-      signIn(access_token);
-    }
-  }, [response]);
-
-  return { promptAsync, request };
 }
 
 export default AuthProvider; 
