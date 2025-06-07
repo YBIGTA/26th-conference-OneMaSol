@@ -1,27 +1,64 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import MaskedView from '@react-native-masked-view/masked-view';
+import * as Google from "expo-auth-session/providers/google";
 import { LinearGradient } from 'expo-linear-gradient';
-import React, { useState } from 'react';
-import { Alert, Image, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import * as WebBrowser from "expo-web-browser";
+import * as React from "react";
+import { useEffect } from "react";
+import { Image, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useGoogleAuth } from '../../hooks/useGoogleAuth';
 
-export const options = { headerShown: false };
+WebBrowser.maybeCompleteAuthSession();
 
 export default function SplashScreen() {
-  const { promptAsync, request } = useGoogleAuth();
-  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_ID,
+    androidClientId: process.env.EXPO_PUBLIC_GOOGLE_ANDROID_ID,
+    iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_ID,
+  });
 
-  const handleGoogleSignIn = async () => {
-    try {
-      setIsLoading(true);
-      await promptAsync();
-    } catch (error) {
-      console.error('Google sign in error:', error);
-      Alert.alert('로그인 실패', 'Google 로그인 중 오류가 발생했습니다.');
-    } finally {
-      setIsLoading(false);
+  const [userInfo, setUserInfo] = React.useState(null);
+
+  const handleSignInWithGoogle = async () => {
+    const user = await AsyncStorage.getItem("@user");
+    if (!user) {
+      if (response?.type === "success") {
+        await getUserInfo(response.authentication?.accessToken as string);
+      }
+    } else {
+      setUserInfo(JSON.parse(user));
     }
   };
+
+  const getUserInfo = async (token: string) => {
+    if (!token) return;
+    try {
+      const response = await fetch(
+        "https://www.googleapis.com/oauth2/v3/userinfo",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const userInfoResponse = await response.json();
+      await AsyncStorage.setItem("@user", JSON.stringify(userInfoResponse));
+      setUserInfo(userInfoResponse);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    handleSignInWithGoogle();
+  }, [response]);
+
+  // 로그인 성공 시 다음 화면으로 이동
+  useEffect(() => {
+    if (userInfo) {
+      router.replace("/(tabs)"); // 또는 원하는 경로로 변경
+    }
+  }, [userInfo]);
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom', 'left', 'right']}>
@@ -40,10 +77,10 @@ export default function SplashScreen() {
         </MaskedView>
         <View style={styles.bottomContainer}>
           <TouchableOpacity 
-            style={[styles.googleButton, isLoading && styles.disabledButton]} 
+            style={[styles.googleButton, !request && styles.disabledButton]} 
             activeOpacity={0.8}
-            onPress={handleGoogleSignIn}
-            disabled={isLoading || !request}
+            onPress={() => promptAsync()}
+            disabled={!request}
           >
             <Image
               source={require('../../assets/images/google-logo.png')}
@@ -51,7 +88,7 @@ export default function SplashScreen() {
               resizeMode="contain"
             />
             <Text style={styles.googleButtonText}>
-              {isLoading ? '로그인 중...' : 'Google로 로그인하기'}
+              Google로 로그인하기
             </Text>
           </TouchableOpacity>
         </View>
