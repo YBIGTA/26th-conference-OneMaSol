@@ -10,14 +10,14 @@ export function useGoogleAuth() {
     androidClientId: process.env.EXPO_PUBLIC_GOOGLE_ANDROID_ID,
     webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_ID,
     usePKCE: true,
-    responseType: 'code',
+    responseType: 'token',
   });
 
   useEffect(() => {
     if (response?.type === 'success') {
-      const { code } = response.params as { code: string };
-      // TODO: code를 백엔드로 POST하는 로직만 추가 토큰 교환
-      // 예시: fetch('/auth/google', { method: 'POST', body: JSON.stringify({ code }) })
+      const { access_token } = response.params;
+      // TODO: access_token을 백엔드로 POST하는 로직만 추가 -> 토큰 교환
+      // 예시: fetch('/auth/google', { method: 'POST', body: JSON.stringify({ access_token }) })
     }
   }, [response]);
 

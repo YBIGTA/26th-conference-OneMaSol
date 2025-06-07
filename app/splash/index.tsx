@@ -1,15 +1,26 @@
 import MaskedView from '@react-native-masked-view/masked-view';
 import { LinearGradient } from 'expo-linear-gradient';
-import { router } from 'expo-router';
-import React from 'react';
-import { Image, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
+import { Alert, Image, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useGoogleAuth } from '../context/AuthContext';
 
 export const options = { headerShown: false };
 
 export default function SplashScreen() {
-  const handleGoogleSignIn = () => {
-    router.replace('/(tabs)');
+  const { promptAsync, request } = useGoogleAuth();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleGoogleSignIn = async () => {
+    try {
+      setIsLoading(true);
+      await promptAsync();
+    } catch (error) {
+      console.error('Google sign in error:', error);
+      Alert.alert('로그인 실패', 'Google 로그인 중 오류가 발생했습니다.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -29,16 +40,19 @@ export default function SplashScreen() {
         </MaskedView>
         <View style={styles.bottomContainer}>
           <TouchableOpacity 
-            style={styles.googleButton} 
+            style={[styles.googleButton, isLoading && styles.disabledButton]} 
             activeOpacity={0.8}
             onPress={handleGoogleSignIn}
+            disabled={isLoading || !request}
           >
             <Image
               source={require('../../assets/images/google-logo.png')}
               style={styles.googleIcon}
               resizeMode="contain"
             />
-            <Text style={styles.googleButtonText}>Sign up with Google</Text>
+            <Text style={styles.googleButtonText}>
+              {isLoading ? '로그인 중...' : 'Google로 로그인하기'}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -94,6 +108,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 2,
+  },
+  disabledButton: {
+    opacity: 0.7,
   },
   googleIcon: {
     width: 24,

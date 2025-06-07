@@ -1,5 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Google from 'expo-auth-session/providers/google';
+import * as WebBrowser from 'expo-web-browser';
 import React, { createContext, useContext, useEffect, useState } from 'react';
+
+WebBrowser.maybeCompleteAuthSession();
 
 type User = {
   id: string;
@@ -41,22 +45,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (token: string) => {
     try {
-      // TODO: 서버에 토큰 전송하여 사용자 정보 받아오기
-      const response = await fetch('YOUR_API_ENDPOINT/auth/google', {
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/auth/oauth/google`, {
         method: 'POST',
         headers: {
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ token }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to authenticate');
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Failed to authenticate');
       }
 
-      const userData = await response.json();
-      setUser(userData);
-      await AsyncStorage.setItem('user', JSON.stringify(userData));
+      const data = await response.json();
+      setUser(data.user);
+      await AsyncStorage.setItem('user', JSON.stringify(data.user));
+      await AsyncStorage.setItem('access_token', data.access_token);
     } catch (error) {
       console.error('Sign in error:', error);
       throw error;
@@ -66,6 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     try {
       await AsyncStorage.removeItem('user');
+      await AsyncStorage.removeItem('access_token');
       setUser(null);
     } catch (error) {
       console.error('Sign out error:', error);
@@ -86,6 +92,26 @@ export function useAuth() {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
+}
+
+export function useGoogleAuth() {
+  const { signIn } = useAuth();
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_ID,
+    androidClientId: process.env.EXPO_PUBLIC_GOOGLE_ANDROID_ID,
+    webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_ID,
+    usePKCE: true,
+    responseType: 'token',
+  });
+
+  useEffect(() => {
+    if (response?.type === 'success') {
+      const { access_token } = response.params;
+      signIn(access_token);
+    }
+  }, [response]);
+
+  return { promptAsync, request };
 }
 
 export default AuthProvider; 
