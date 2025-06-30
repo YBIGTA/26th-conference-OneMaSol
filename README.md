@@ -70,5 +70,5 @@
 |  김현운  | 모델 총괄 | LangGraph 기반 멀티 에이전트 시스템 아키텍처 설계, 상태 기반 흐름 제어 및 프롬프트 엔지니어링 |
 |  이재우  | 모델 | Task Router 및 Calendar Agent 구현, LangGraph 기반 멀티 에이전트 시스템 아키텍처 구성 |
 |  최서영  | 모델 | RAG 파이프라인 담당, 데이터 수집 및 청킹 등 전처리, 임베딩 파이프라인 구현 ,MongoDB Atlas 기반 벡터 DB 구축 및 검색 기능 구현, LagnGraph기반  RAG Agent 구현 |
-|  김이지  | 백엔드/서버 | 모델 서빙 환경 구축(Vessl, Ollama), FastAPI 기반 API 서버 및 DB 스키마 설계, 전체 시스템 파이프라인 통합 |
+|  김이지  | 백엔드, 모델 서빙 | 모델 서빙 환경 구축(Vessl, Ollama), FastAPI 기반 API 서버 및 DB 스키마 설계, 전체 시스템 파이프라인 통합 |
 |  조요셉  | 프론트엔드 | React Native 모바일 앱 개발, Google OAuth 인증 구현, UI/UX 설계 및 네비게이션 구조화 |
